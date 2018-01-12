@@ -1,0 +1,111 @@
+﻿<Window x:Class="LetterGui.EditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LetterGui"
+        xmlns:data="clr-namespace:LetterLib.Data;assembly=LetterLib"
+        mc:Ignorable="d" Closing="SubQuit"
+        Title="Generate Cover Letter" Height="500" Width="800" Icon="crab.ico" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <local:ToggleToVisiableConverter x:Key="ToggleToVisiableConverter"/>
+        <local:ToggleToHeightConverter x:Key="ToggleToHeightConverter"/>
+        <DataTemplate x:Key="FieldItemTemplate" DataType="data:FieldSlot">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button ToolTip="Copy field name to clipboard"
+                    Grid.Column="0" Content="{Binding FieldName}" Click="SubCopyFieldName" Margin="5,2"/>
+                <TextBox Grid.Column="1" Text="{Binding FieldValue}" Margin="5,2" TextAlignment="Center" MaxLines="1"/>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="ParaItemTemplate" DataType="data:ParaSlot">
+            <StackPanel Orientation="Vertical">
+                <ToggleButton x:Name="tbPara" ToolTip="Expand text box" Margin="5,2">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <TextBlock Text="{Binding ParaName}" Margin="5,0"/>
+                        <TextBlock Text="{Binding ParaSubName}" Margin="5,0"/>
+                    </StackPanel>
+                </ToggleButton>
+                <TextBox 
+                    TextWrapping="Wrap"
+                    Text="{Binding ParaValue}" Margin="5,2" Height="{Binding IsChecked, Converter={StaticResource ToggleToHeightConverter}, ElementName=tbPara}"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="ResItemTemplate" DataType="data:ParaResource">
+            <StackPanel HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal" >
+                    <ToggleButton x:Name="tbRes" Content="+"  
+                                  Width="15" ToolTip="Expand text box"/>
+                    <Button HorizontalContentAlignment="Left" 
+                            ToolTip="Copy resource name to clipboard"
+                            Click="SubCopyResName">
+                        <StackPanel Orientation="Horizontal" >
+                            <TextBlock x:Name="toggleButton" Text="{Binding ParaName}" Margin="5,2"/>
+                            <TextBlock Text="{Binding ResourceName}" Margin="5,2" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <TextBox Text="{Binding ParaValue}" Visibility="{Binding IsChecked, Converter={StaticResource ToggleToVisiableConverter}, Mode=OneWay,ElementName=tbRes}" 
+                         TextWrapping="Wrap"/>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <Window.DataContext>
+        <local:ViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" MinWidth="400"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" MinWidth="240"/>
+            </Grid.ColumnDefinitions>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="160"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Template file path" Margin="5,2"/>
+                        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Template.TemplateFilePath}" Margin="5,2" TextAlignment="Center"/>
+                        <TextBlock Grid.Column="0" Grid.Row="1" Text="Output file name schema" Margin="5,2"/>
+                        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Template.OutputFileNameTemplate}" Margin="5,2" TextAlignment="Center"/>
+                    </Grid>
+                    <ListBox Margin="5,2" ItemsSource="{Binding Template.Fields}" ItemTemplate="{DynamicResource FieldItemTemplate}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+                    <ListBox Margin="5,2" ItemsSource="{Binding Template.ParaSlots}" ItemTemplate="{DynamicResource ParaItemTemplate}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+                </StackPanel>
+            </ScrollViewer>
+            <ScrollViewer Grid.Column="2" Margin="5,2" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Button Content="Generate"  Margin="5,2" Click="SubGenerate"/>
+                    <Button Content="Save Template"  Margin="5,2" Click="SubSave"/>
+                    <ListBox ItemsSource="{Binding Template.Resources}" ItemTemplate="{DynamicResource ResItemTemplate}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+                </StackPanel>
+            </ScrollViewer>
+            <GridSplitter Grid.Column="1"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Stretch"
+              Background="Gray" 
+              ShowsPreview="True"
+              Width="2"
+              />
+        </Grid>
+        <TextBlock Grid.Row="1" HorizontalAlignment="Right" Margin="5,2">           
+            <Hyperlink NavigateUri="https://github.com/gokurakujoudo" RequestNavigate="SubLink">
+               Contact author
+            </Hyperlink>
+        </TextBlock>
+    </Grid>
+</Window>
