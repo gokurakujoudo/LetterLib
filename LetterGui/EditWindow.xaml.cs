@@ -1,10 +1,8 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Navigation;
 using LetterLib.Data;
@@ -18,12 +16,9 @@ namespace LetterGui {
     public partial class EditWindow {
         public EditWindow() { InitializeComponent(); }
 
-        private bool _needQuit = false;
         private ViewModel GetViewModel() =>this. DataContext.To<ViewModel>();
 
-        private void SubQuit(object sender, CancelEventArgs e) {
-            if (_needQuit) WordHelper.SafeQuit();
-        }
+
 
         private void SubCopyFieldName(object sender, RoutedEventArgs e) {
             var btn =(Button) sender;
@@ -41,11 +36,11 @@ namespace LetterGui {
             TemplateHelper.CurrenTemplate = GetViewModel().Template;
             if (MessageBox.Show("Save?", "", MessageBoxButton.YesNo, MessageBoxImage.Information) !=
                 MessageBoxResult.Yes) return;
-            TemplateHelper.Save(Program.fPath);
+            TemplateHelper.Save(Program.FPath);
         }
 
         private void SubGenerate(object sender, RoutedEventArgs e) {
-            _needQuit = true;
+            Program.NeedQuit = true;
             var temp = GetViewModel().Template;
             temp.BuildFile();
         }

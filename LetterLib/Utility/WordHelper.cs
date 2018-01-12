@@ -77,29 +77,23 @@ namespace LetterLib.Utility {
             }
         }
 
-        public static void ExportPdf(this Document doc, string fpath) {
+        public static void ExportPdf(this Document doc, string fpath, bool open = true) {
             if (doc == null) return;
-            var paramExportFormat = WdExportFormat.wdExportFormatPDF;
-            var paramOpenAfterExport = true;
-            var paramExportOptimizeFor = WdExportOptimizeFor.wdExportOptimizeForPrint;
-            var paramExportRange = WdExportRange.wdExportAllDocument;
-            var paramStartPage = 0;
-            var paramEndPage = 0;
-            var paramExportItem = WdExportItem.wdExportDocumentContent;
-            var paramIncludeDocProps = true;
-            var paramKeepIRM = true;
-            var paramCreateBookmarks = WdExportCreateBookmarks.wdExportCreateWordBookmarks;
-            var paramDocStructureTags = true;
-            var paramBitmapMissingFonts = true;
-            var paramUseISO19005_1 = false;
+            const WdExportFormat paramExportFormat = WdExportFormat.wdExportFormatPDF;
+            const WdExportOptimizeFor paramExportOptimizeFor = WdExportOptimizeFor.wdExportOptimizeForPrint;
+            const WdExportRange paramExportRange = WdExportRange.wdExportAllDocument;
+            const int paramStartPage = 0;
+            const int paramEndPage = 0;
+            const WdExportItem paramExportItem = WdExportItem.wdExportDocumentContent;
+            const WdExportCreateBookmarks paramCreateBookmarks = WdExportCreateBookmarks.wdExportCreateWordBookmarks;
             var paramMissing = Type.Missing;
 
             doc.ExportAsFixedFormat(fpath,
-                                    paramExportFormat, paramOpenAfterExport,
+                                    paramExportFormat, open,
                                     paramExportOptimizeFor, paramExportRange, paramStartPage,
-                                    paramEndPage, paramExportItem, paramIncludeDocProps,
-                                    paramKeepIRM, paramCreateBookmarks, paramDocStructureTags,
-                                    paramBitmapMissingFonts, paramUseISO19005_1,
+                                    paramEndPage, paramExportItem, true,
+                                    true, paramCreateBookmarks, true,
+                                    true, false,
                                     ref paramMissing);
         }
     }
